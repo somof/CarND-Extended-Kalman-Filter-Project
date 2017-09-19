@@ -1,4 +1,3 @@
-
 // Write a function 'filter()' that implements a multi-
 // dimensional Kalman Filter for the example given
 //============================================================================
@@ -116,6 +115,7 @@ void filter(VectorXd &x, MatrixXd &P) {
 	for (unsigned int n = 0; n < measurements.size(); ++n) {
 
 		VectorXd z = measurements[n];
+		//YOUR CODE HERE
 		/*
 		 * KF Measurement update step
 		 */
@@ -135,7 +135,7 @@ void filter(VectorXd &x, MatrixXd &P) {
 		x = F * x + u;
 		MatrixXd Ft = F.transpose();
 		P = F * P * Ft + Q;
-		
+
 		std::cout << "x = " << std::endl <<  x << std::endl;
 		std::cout << "P = " << std::endl <<  P << std::endl;
 	}
