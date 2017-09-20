@@ -61,12 +61,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     // Forum
     // https://discussions.udacity.com/t/why-use-different-update-functions-update-and-updateekf-in-kalman-filter/302125
 
-    // TODO
-    // 座標変換
-    // z_pred -> 入れ替え
 
-
-  
     // Get predicted location in polar coords.
     float px = x_(0);
     float py = x_(1);
