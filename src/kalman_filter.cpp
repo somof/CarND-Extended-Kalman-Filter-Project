@@ -59,8 +59,11 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   */
 
     // Forum
+    // Why use different update functions(update and updateEKF) in Kalman Filter?
     // https://discussions.udacity.com/t/why-use-different-update-functions-update-and-updateekf-in-kalman-filter/302125
-
+    //
+    // Radar estimates going out of whack
+    // https://discussions.udacity.com/t/radar-estimates-going-out-of-whack/347808
 
     // Get predicted location in polar coords.
     float px = x_(0);
@@ -68,27 +71,30 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     float vx = x_(2);
     float vy = x_(3);
   
-    // float eps = 0.000001;  // Make sure we don't divide by 0.
-    // if (fabs(px) < eps && fabs(py) < eps) {
-    //     px = eps;
-    //     py = eps;
-    // } else if (fabs(px) < eps) {
-    //     px = eps;
-    // }
-  
-    float rho = sqrtf(powf(px, 2) + powf(py, 2));
+    float rho = sqrtf(px * px + py * py);
     float phi = atan2f(py, px);
-    float rho_dot = (px * vx + py * vy) / (rho + FLT_MIN);
-  
+
+    // float rho_dot = (px * vx + py * vy) / (rho + FLT_MIN);
+    float rho_dot;
+    if (fabs(rho) < 0.0001) {
+        rho_dot = 0;
+    } else {
+        rho_dot = (px * vx + py * vy) / rho;
+    }
+    float diff = z(1) - phi;
+    // Forum
+    // https://discussions.udacity.com/t/ekf-gets-off-track/276122
+    if (6.2 < diff) {
+        phi += 2 * M_PI;
+    }
+
+
     VectorXd hx(3);
     hx << rho, phi, rho_dot;
-
-
-
+	VectorXd y = z - hx;
 	// VectorXd z_pred = H_ * x_;
 	// VectorXd y = z - z_pred;
 
-	VectorXd y = z - hx;
 
 	MatrixXd Ht = H_.transpose();
 	MatrixXd S = H_ * P_ * Ht + R_;
