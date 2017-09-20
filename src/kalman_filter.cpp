@@ -1,4 +1,5 @@
 #include "kalman_filter.h"
+#include "float.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -56,8 +57,43 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   TODO:
     * update the state by using Extended Kalman Filter equations
   */
-	VectorXd z_pred = H_ * x_;
-	VectorXd y = z - z_pred;
+
+    // Forum
+    // https://discussions.udacity.com/t/why-use-different-update-functions-update-and-updateekf-in-kalman-filter/302125
+
+    // TODO
+    // 座標変換
+    // z_pred -> 入れ替え
+
+
+  
+    // Get predicted location in polar coords.
+    float px = x_(0);
+    float py = x_(1);
+    float vx = x_(2);
+    float vy = x_(3);
+  
+    // float eps = 0.000001;  // Make sure we don't divide by 0.
+    // if (fabs(px) < eps && fabs(py) < eps) {
+    //     px = eps;
+    //     py = eps;
+    // } else if (fabs(px) < eps) {
+    //     px = eps;
+    // }
+  
+    float rho = sqrtf(powf(px, 2) + powf(py, 2));
+    float phi = atan2f(py, px);
+    float rho_dot = (px * vx + py * vy) / (rho + FLT_MIN);
+  
+    VectorXd hx(3);
+    hx << rho, phi, rho_dot;
+
+
+
+	// VectorXd z_pred = H_ * x_;
+	// VectorXd y = z - z_pred;
+
+	VectorXd y = z - hx;
 
 	MatrixXd Ht = H_.transpose();
 	MatrixXd S = H_ * P_ * Ht + R_;
