@@ -11,12 +11,9 @@ Tools::~Tools() {}
 
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
                               const vector<VectorXd> &ground_truth) {
-    /**
-       TODO:
-     * Calculate the RMSE here.
-     */
+    // Calculate the RMSE here.
+
 	VectorXd rmse(4);
-    rmse(4);
 	rmse << 0,0,0,0;
 
 	// check the validity of the following inputs:
@@ -44,15 +41,13 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 	//calculate the squared root
 	rmse = rmse.array().sqrt();
 
+    // cout << estimations.size() << " " << rmse << endl;
 	//return the result
 	return rmse;
 }
 
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
-    /**
-    TODO:
-      * Calculate a Jacobian here.
-    */
+    // Calculate a Jacobian here.
 
 	MatrixXd Hj(3,4);
 	//recover state parameters
@@ -69,12 +64,17 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 	//check division by zero
 	if(fabs(c1) < 0.0001){
 		cout << "CalculateJacobian () - Error - Division by Zero" << endl;
+        Hj <<
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0;
 		return Hj;
 	}
 
 	//compute the Jacobian matrix
-	Hj << (px/c2), (py/c2), 0, 0,
-        -(py/c1), (px/c1), 0, 0,
+	Hj <<
+                      (px/c2),               (py/c2), 0, 0,
+                     -(py/c1),               (px/c1), 0, 0,
         py*(vx*py - vy*px)/c3, px*(px*vy - py*vx)/c3, px/c2, py/c2;
 
 	return Hj;
